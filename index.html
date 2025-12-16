@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <title>相册后台</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <style>
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, sans-serif;
+      background: #0f1115;
+      color: #eaeaea;
+      margin: 0;
+      padding: 40px;
+    }
+    h1 { margin-top: 0; }
+    .box {
+      max-width: 900px;
+      margin: auto;
+      background: #161a22;
+      padding: 24px;
+      border-radius: 12px;
+    }
+    button {
+      padding: 10px 14px;
+      border-radius: 8px;
+      border: none;
+      background: #3b82f6;
+      color: #fff;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    pre {
+      background: #0b0e14;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>📷 私人图床后台</h1>
+    <p>如果你能看到这个页面，说明：</p>
+    <ul>
+      <li>✅ Pages 后台已经部署成功</li>
+      <li>✅ 域名可以正常访问</li>
+      <li>🔒 下一步将接入 Cloudflare Access</li>
+    </ul>
+
+    <button id="test">测试 API（/api/albums）</button>
+    <pre id="output">等待操作…</pre>
+  </div>
+
+  <script>
+    document.getElementById('test').onclick = async () => {
+      const out = document.getElementById('output');
+      out.textContent = '请求中…';
+      try {
+        const r = await fetch('https://pic.linyuan.cc/api/albums');
+        const t = await r.text();
+        out.textContent = t;
+      } catch (e) {
+        out.textContent = '请求失败：' + e.message;
+      }
+    };
+  </script>
+</body>
+</html>
