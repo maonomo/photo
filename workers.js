@@ -5,7 +5,7 @@ export default {
     const DATABASE = env.DATABASE;
     const USERNAME = env.USERNAME;
     const PASSWORD = env.PASSWORD;
-    const adminPath = env.ADMIN_PATH;
+    const adminPath = env.ADMIN_PATH;  // 在这里定义 adminPath
     const enableAuth = env.ENABLE_AUTH === 'true';
     const R2_BUCKET = env.R2_BUCKET;
     const maxSizeMB = env.MAX_SIZE_MB ? parseInt(env.MAX_SIZE_MB, 10) : 10;
@@ -53,7 +53,7 @@ export default {
           ? await handleGetAlbumImages(request, DATABASE, USERNAME, PASSWORD)
           : new Response('Method Not Allowed', { status: 405 });
       case '/albums':
-        return await handleAlbumsPage(request, DATABASE, USERNAME, PASSWORD);
+        return await handleAlbumsPage(request, DATABASE, USERNAME, PASSWORD, adminPath);  // 修复：传递 adminPath
       // ==================== 相册管理路由结束 ====================
       
       default:
