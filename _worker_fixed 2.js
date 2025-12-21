@@ -946,7 +946,16 @@ async function fetchMediaData(DATABASE) {
 async function handleUploadRequest(request, DATABASE, enableAuth, USERNAME, PASSWORD, domain, R2_BUCKET, maxSize) {
   try {
     const formData = await request.formData();
-    const file = formData.get('file');
+    let file = formData.get('file');
+
+// 如果是图片，统一转为 webp（GIF 不动）
+if (file && file.type.startsWith('image/') && file.type !== 'image/gif') {
+  const webpFile = await convertImageToWebP(file, 0.85);
+  if (webpFile) {
+    file = webpFile;
+  }
+}
+    
     if (!file) throw new Error('缺少文件');
     
     if (file.size > maxSize) {
@@ -959,7 +968,7 @@ async function handleUploadRequest(request, DATABASE, enableAuth, USERNAME, PASS
     await R2_BUCKET.put(r2Key, file.stream(), {
       httpMetadata: { contentType: file.type }
     });
-    const fileExtension = file.name.split('.').pop();
+    const fileExtension = file.type === 'image/webp' ? 'webp' : file.name.split('.').pop();
     const imageURL = `https://${domain}/${r2Key}.${fileExtension}`;
     await DATABASE.prepare('INSERT INTO media (url) VALUES (?) ON CONFLICT(url) DO NOTHING').bind(imageURL).run();
     return new Response(JSON.stringify({ data: imageURL }), { status: 200, headers: { 'Content-Type': 'application/json' } });
